@@ -1,2 +1,4 @@
 (library
- (name miniml))
+ (name miniml)
+ (libraries batteries)
+ )

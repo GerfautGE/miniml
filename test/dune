@@ -1,2 +1,4 @@
 (test
- (name test_miniml))
+ (name test_lexer)
+ (libraries miniml)
+ )
