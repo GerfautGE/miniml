@@ -1,4 +1,6 @@
 (executable
  (public_name miniml)
  (name main)
- (libraries miniml))
+ (libraries
+    batteries
+ ))
