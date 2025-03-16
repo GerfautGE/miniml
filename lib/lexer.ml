@@ -26,6 +26,9 @@ let digit_r: regexp = Charset (Set.of_list (String.to_list "0123456789"))
 
 let plus (r: regexp) : regexp = Concat(r, Star(r))
 
+let ( || ) (r1: regexp) (r2: regexp) = Alt(r1, r2)
+let ( ++ ) (r1: regexp) (r2: regexp) = Concat(r1, r2)
+
 (* Recognize one char c *)
 let char_regexp (c: char): regexp =
   Charset( Set.singleton c)
@@ -43,21 +46,7 @@ let list_regexp : (regexp * (string -> token option)) list =
     (* int : (digit)+ *)
     (plus digit_r, fun s -> Some(TK_INT(int_of_string s)));
     (* id: ( '_' | lowercase)( '_' | alpha | digit)* *)
-    (Concat(
-      Alt(
-        char_regexp '_',
-        lowercase_r
-      ),
-      Star(
-        Alt(
-          Alt(
-            char_regexp '_',
-            alpha
-          ),
-          digit_r
-        )
-      )
-    ), fun s -> Some(TK_ID(s)));
+    (char_regexp '_' || lowercase_r)++(Star(char_regexp '_' || alpha || digit_r)), fun s -> Some(TK_ID(s));
   ]
 ;;
 
@@ -89,8 +78,9 @@ let concat_nfa (n1: nfa) (n2: nfa): nfa =
     (* Need to mend the two NFAs at the frontier *)
     let stitch_out: state list = List.map fst n1.f in (* all n1's final states *)
     (* n2's inital states as well as all previous "natural" dest *)
+    let stitch_in = n2.i@(List.map snd (n1.t st)) in
     if List.mem st stitch_out then
-      List.map (fun q -> (None, q)) n2.i@(n1.t st) (* let's add an epsilon transition *)
+      List.map (fun q -> (None, q)) stitch_in (* let's add an epsilon transition *)
     else (* keep the transition from previous NFA *)
     if List.mem st n1.q then
       n1.t st
