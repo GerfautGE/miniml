@@ -1,16 +1,6 @@
-open Miniml.Regexp
-open Miniml.Nfa
-open Miniml.Dfa
 open Miniml.Token
-open Miniml.Lexer
+open Miniml.Regexp
 open Batteries
-
-let lowercase_letters = "abcdefghijklmnopqrstuvwxyz"
-let uppercase_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-let digits = "0123456789"
-let other_characters = "?!=<>_ :;,{}()[]^`-+*/%@\n\t\x00.\"\'\\|~#$&"
-
-let alphabet = String.to_list (lowercase_letters ^ uppercase_letters ^ digits ^ other_characters)
 
 (* List of regexp per tokens *)
 let list_regexp : (regexp * (string -> token option)) list =
@@ -28,14 +18,9 @@ let list_regexp : (regexp * (string -> token option)) list =
   ]
 ;;
 
-
-let () =
-  let n = nfa_of_list_regexp list_regexp in
-  let d = dfa_of_list_regexp list_regexp in
-  let oc =  open_out "/tmp/nfa.dot" in
-  let _ = dot_of_nfa oc n in
-  let _ = close_out oc in
-  let oc = open_out "/tmp/dfa.dot" in
-  let _ = dot_of_dfa oc d alphabet in
-  close_out oc
+let lexer (input: string): unit =
+  match Miniml.Lexer.lexer list_regexp input with
+  | _, w when w <> [] -> Printf.printf "Error: %s\n" (String.of_list w)
+  | [], _ -> Printf.printf "No token found\n"
+  | tokens, _ -> List.iter (fun t -> Printf.printf "%s\n" (string_of_token t)) tokens
 ;;
