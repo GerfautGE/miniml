@@ -18,9 +18,9 @@ let list_regexp : (regexp * (string -> token option)) list =
   ]
 ;;
 
-let lexer (input: string): unit =
+let lexer (input: string): token list =
   match Miniml.Lexer.lexer list_regexp input with
-  | _, w when w <> [] -> Printf.printf "Lexical Error: %c\n" (List.hd w)
-  | [], _ -> Printf.printf "No token found\n"
-  | tokens, _ -> List.iter (fun t -> Printf.printf "%s\n" (string_of_token t)) tokens
+  | _, w when w <> [] -> Printf.printf "Lexical Error: %c\n" (List.hd w) ; exit 1
+  | [], _ -> Printf.printf "No token found\n"; exit 1
+  | tokens, _ -> tokens
 ;;
