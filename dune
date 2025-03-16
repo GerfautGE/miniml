@@ -1,0 +1,6 @@
+(env
+  (dev
+    (ocamlopt_flags (-g)))
+  ( release
+    (ocamlopt_flags (-compact -ccopt -s -ccopt -O3 -ccopt -march=native -ccopt -static )))
+)
