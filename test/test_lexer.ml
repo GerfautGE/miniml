@@ -29,7 +29,7 @@ let list_regexp : (regexp * (string -> token option)) list =
 ;;
 
 
-let () =
+let dump_lexer: unit =
   let n = nfa_of_list_regexp list_regexp in
   let d = dfa_of_list_regexp list_regexp in
   let oc =  open_out "/tmp/nfa.dot" in
